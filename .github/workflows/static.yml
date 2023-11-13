@@ -1,0 +1,42 @@
+name: Deploy to homepage
+
+on:
+  push:
+    branches:
+      -main
+  workflow_dispatch:
+
+jobs:
+   deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ":cloud: checkout repository"
+        uses: actions/checkout@v3
+        
+      - name: ":wrench: setup node"
+        uses: actions/setup-node@v3.8.1
+        with:
+          node-version: 18
+          
+      - name: ":wrench: install npm@latest"
+        run: npm i -g npm@latest
+        
+      - name: ":package: install dependencies"
+        uses: bahmutov/npm-install@v1
+        
+      - name: ":package: type check"
+        run: npm run type-check
+        
+      - name: ":package: build solution"
+        run: npm run build
+        
+      - name: ":tada: deploy"
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_URL }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21 # todo replace with your web hosts ftps port
+          local-dir: ./dist/
+          server-dir: ./beta/
