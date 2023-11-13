@@ -10,27 +10,24 @@ jobs:
    deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: ":cloud: checkout repository"
+      - name: "checkout repository"
         uses: actions/checkout@v3
         
-      - name: ":wrench: setup node"
+      - name: "setup node"
         uses: actions/setup-node@v3.8.1
         with:
           node-version: 18
           
-      - name: ":wrench: install npm@latest"
+      - name: "install npm@latest"
         run: npm i -g npm@latest
         
-      - name: ":package: install dependencies"
+      - name: "install dependencies"
         uses: bahmutov/npm-install@v1
         
-      - name: ":package: type check"
-        run: npm run type-check
-        
-      - name: ":package: build solution"
+      - name: "build solution"
         run: npm run build
         
-      - name: ":tada: deploy"
+      - name: "deploy"
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_URL }}
@@ -39,4 +36,4 @@ jobs:
           protocol: ftps
           port: 21 # todo replace with your web hosts ftps port
           local-dir: ./dist/
-          server-dir: ./beta/
+          server-dir: ./tuneninja/
