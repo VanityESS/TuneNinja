@@ -2,6 +2,16 @@
   <div class="hello">
     <button @click="getToken">Get Token</button>
     <button @click="getArtistInfo">Get Artist Info</button>
+
+    <div v-if="artistInfo">
+      <h2>{{ artistInfo.name }}</h2>
+      <p>{{ artistInfo.genres.join(', ') }}</p>
+      <!-- Add other properties you want to display -->
+    </div>
+
+    <div v-if="error">
+      <p>Error: {{ error }}</p>
+    </div>  
   </div>
 </template>
 
@@ -10,6 +20,12 @@ import axios from 'axios';
 let accessToken='';
 
 export default {
+  data() {
+    return {
+      artistInfo: null,
+      error: null,
+    };
+  },
   methods: {
     async getToken() {
       const url = 'https://accounts.spotify.com/api/token';
@@ -31,8 +47,25 @@ export default {
       } catch (error) {
         console.error('Error getting token:', error);
       }
-    }
-    
+    },
+    async getArtistInfo() {
+      const artistId = '4wyNyxs74Ux8UIDopNjIai';
+      const url = `https://api.spotify.com/v1/artists/${artistId}`;
+
+      const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+      };
+
+      try {
+        const response = await axios.get(url, { headers });
+        // Access the artist information from the response object
+        this.artistInfo = response.data;
+        console.log('Artist Information:', this.artistInfo);
+        // Perform further actions with the artist information if needed
+      } catch (error) {
+        console.error('Error getting artist information:', error);
+      }
+    } 
   }
 };
 </script>
